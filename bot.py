@@ -1,14 +1,8 @@
 from playwright.sync_api import sync_playwright, expect
 import time
 
-
-
-#============================
 LOGIN = 'pepsi cola'
 PASSWORD = '12345678'
-#============================
-
-
 
 playwright = sync_playwright().start()
 browser = playwright.chromium.launch(headless=False)
@@ -58,7 +52,7 @@ def fight():
         return
 
     enemy.first.click()
-    time.sleep(0.2)
+    time.sleep(0.3)  # увеличенная пауза для открытия меню
 
     game_frame.get_by_text("Напасть", exact=True).click()
     print('Напасть')
@@ -80,19 +74,17 @@ def fight():
 
     move(1)
 
-    # Сбор предметов с пола через цикл while
     while True:
         items = game_frame.locator('.items a')
         if items.count() == 0:
             break
         items.first.click()
         print('item collected')
-        time.sleep(1)      # небольшая пауза для стабильности
+        time.sleep(0.3)  # пауза для исчезновения предмета
 
     time.sleep(0.3)
 
 def loot():
-    """Открыть сундук (поворот налево → клик → поворот направо)"""
     turn('l')
     time.sleep(0.3)
     chest = game_frame.locator('div.item img[onclick*="sunduk"]')
@@ -174,9 +166,9 @@ try:
         turn('l')
         move(2)
         fight()
+
         time.sleep(1)
         finish()
-        break  # выходим из цикла после успешного finish
 
 except KeyboardInterrupt:
     print("Killing...")
