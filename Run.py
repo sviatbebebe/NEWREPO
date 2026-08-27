@@ -1,5 +1,6 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 import time
+import re
 
 #==================#
 LOGIN = 'pepsi cola'
@@ -13,19 +14,25 @@ browser = playwright.chromium.launch(headless=False)
 page = browser.new_page()
 
 page.goto("https://therebk.com/game.php")
-page.wait_for_load_state("networkidle")
+# Проверяем первое поле
+expect(page.locator("#login")).to_be_visible()
+expect(page.locator("#password")).to_be_visible()
+
 
 #===============loging in===========================
 page.fill("#login", LOGIN)          
 page.fill("#password", PASSWORD)       
-page.click("button:has-text('Войти')")
+page.get_by_role("button", name="Войти").click()
 print('Done')
+
 #=============waiting===========================
+game_frame = page.frame_locator("[name='theframe']")
+start_button = game_frame.locator("input[name='start']")
 
+#expect(start_button).to_be_visible(timeout=0)
+#start_button.click()
 
-
-
-
+#=============grinding===========================
 
 
 
