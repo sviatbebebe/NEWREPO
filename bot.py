@@ -47,30 +47,48 @@ def turn(side):
 def fight():
     enemy = game_frame.locator('div.item img[onclick*="OpenMenu"]')
     if enemy.count() == 0 or not enemy.first.is_visible():
-        print("Врагов нет, делаем шаг")
+        print("Сбился с пути")
         move(1)
         return
 
     enemy.first.click()
-    time.sleep(0.3)  # увеличенная пауза для открытия меню
+    time.sleep(0.3)
 
     game_frame.get_by_text("Напасть", exact=True).click()
     print('Напасть')
     time.sleep(0.2)
 
     while True:
-        auto_btn = game_frame.locator("input[value='Авто']")
-        if auto_btn.count() > 0 and auto_btn.is_visible():
-            auto_btn.click()
-            print("Auto")
-            time.sleep(0.3)
-
+        # Сначала проверяем, не закончился ли бой
         return_btn = game_frame.locator("input[value='Вернуться']")
         if return_btn.count() > 0 and return_btn.is_visible():
             return_btn.click()
             print("fight is over")
             time.sleep(0.5)
             break
+
+        # Если бой не закончен, пробуем нажать "Авто" (если доступна)
+        auto_btn = game_frame.locator("input[value='Авто']")
+        if auto_btn.count() > 0 and auto_btn.is_visible() and auto_btn.is_enabled():
+            auto_btn.click()
+            print("Auto")
+            time.sleep(0.3)
+        else:
+            # Если "Авто" недоступна, просто ждём и повторяем проверку
+            time.sleep(0.3)
+
+    move(1)
+
+    # Сбор предметов с пола
+    while True:
+        items = game_frame.locator('.items a')
+        if items.count() == 0:
+            break
+        items.first.click()
+        print('item collected')
+        time.sleep(0.3)
+
+    time.sleep(0.3)
 
     move(1)
 
